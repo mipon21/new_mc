@@ -60,23 +60,15 @@ class LanguageAdvancedManager
 
         $defaultLocale = Language::getDefaultLocaleCode();
 
-        if ($language != $defaultLocale) {
-            $defaultTranslation = DB::table($table)
-                ->where([
-                    'lang_code' => $defaultLocale,
-                    $object->getTable() . '_id' => $object->getKey(),
-                ])
-                ->first();
-
-            if ($defaultTranslation) {
-                foreach (DB::getSchemaBuilder()->getColumnListing($table) as $column) {
-                    if (! in_array($column, array_keys($condition))) {
-                        $object->{$column} = $defaultTranslation->{$column};
-                    }
+        // Only update the main table if we're saving the default language
+        if ($language == $defaultLocale) {
+            // Update the main table with the default language content
+            foreach (DB::getSchemaBuilder()->getColumnListing($table) as $column) {
+                if (! in_array($column, array_keys($condition)) && isset($data[$column])) {
+                    $object->{$column} = $data[$column];
                 }
-
-                $object->save();
             }
+            $object->save();
         }
 
         return true;

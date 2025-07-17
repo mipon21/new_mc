@@ -10,6 +10,7 @@ use Botble\LanguageAdvanced\Supports\LanguageAdvancedManager;
 use Botble\Slug\Events\UpdatedSlugEvent;
 use Botble\Slug\Facades\SlugHelper;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 class LanguageAdvancedController extends BaseController
 {
@@ -67,9 +68,40 @@ class LanguageAdvancedController extends BaseController
             $form->saveMetadataFields();
         }
 
+        // Determine the correct redirect URL based on the model type
+        $redirectUrl = $this->getRedirectUrl($data, $language, $request);
+
         return $this
             ->httpResponse()
-            ->usePreviousRouteName()
+            ->setPreviousUrl($redirectUrl)
             ->withUpdatedSuccessMessage();
+    }
+
+    protected function getRedirectUrl($data, $language = null, $request = null): string
+    {
+        // Map model classes to their edit routes
+        $modelRouteMap = [
+            'Botble\Page\Models\Page' => 'pages.edit',
+            'Botble\Blog\Models\Post' => 'posts.edit',
+            'Botble\Ecommerce\Models\Product' => 'products.edit',
+            // Add more mappings as needed
+        ];
+
+        $modelClass = get_class($data);
+        $routeName = $modelRouteMap[$modelClass] ?? null;
+
+        if ($routeName && \Route::has($routeName)) {
+            $url = route($routeName, $data->getKey());
+            
+            // Add language parameter if not default language
+            if ($language && $language !== \Botble\Language\Facades\Language::getDefaultLocaleCode()) {
+                $url .= '?ref_lang=' . $language;
+            }
+            
+            return $url;
+        }
+
+        // Fallback to previous URL or admin dashboard
+        return $request ? $request->header('referer') ?? route('dashboard.index') : route('dashboard.index');
     }
 }
