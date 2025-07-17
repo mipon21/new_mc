@@ -21,8 +21,22 @@ class ProductPriceController extends BaseController
 
     public function update(Product $product, UpdateProductPriceRequest $request)
     {
+        $column = $request->input('column');
+        $value = $request->input('value');
+        
+        // Apply VAT division (divide by 1.19) for price columns only when value is changing
+        if (in_array($column, ['price', 'sale_price']) && $value !== null && $value !== '') {
+            $inputValue = (float) $value;
+            $currentValue = (float) $product->{$column};
+            
+            // Only apply division if the value is actually being changed
+            if ($inputValue != $currentValue) {
+                $value = $inputValue / 1.19;
+            }
+        }
+        
         $product->forceFill([
-            $request->input('column') => $request->input('value'),
+            $column => $value,
         ])->save();
 
         if ($product->is_variation) {

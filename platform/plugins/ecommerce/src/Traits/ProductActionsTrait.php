@@ -87,8 +87,36 @@ trait ProductActionsTrait
                         }
                     }
                 }
-                $productRelatedToVariation->price = Arr::get($version, 'price', $product->price);
-                $productRelatedToVariation->sale_price = Arr::get($version, 'sale_price', $product->sale_price);
+                // Apply VAT division (divide by 1.19) to prices for variations only when changed
+                $price = Arr::get($version, 'price', $product->price);
+                $salePrice = Arr::get($version, 'sale_price', $product->sale_price);
+                
+                if ($price !== null && $price !== '') {
+                    $inputPrice = (float) $price;
+                    $currentPrice = (float) ($productRelatedToVariation->price ?? 0);
+                    
+                    // Only apply division if this is a new variation or price is being changed
+                    if ($isNew || $inputPrice != $currentPrice) {
+                        $price = $inputPrice / 1.19;
+                    } else {
+                        $price = $inputPrice;
+                    }
+                }
+                
+                if ($salePrice !== null && $salePrice !== '') {
+                    $inputSalePrice = (float) $salePrice;
+                    $currentSalePrice = (float) ($productRelatedToVariation->sale_price ?? 0);
+                    
+                    // Only apply division if this is a new variation or sale price is being changed
+                    if ($isNew || $inputSalePrice != $currentSalePrice) {
+                        $salePrice = $inputSalePrice / 1.19;
+                    } else {
+                        $salePrice = $inputSalePrice;
+                    }
+                }
+                
+                $productRelatedToVariation->price = $price;
+                $productRelatedToVariation->sale_price = $salePrice;
                 $productRelatedToVariation->description = Arr::get($version, 'description');
 
                 $productRelatedToVariation->length = Arr::get($version, 'length', $product->length);

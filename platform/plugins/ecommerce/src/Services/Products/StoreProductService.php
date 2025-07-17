@@ -55,6 +55,35 @@ class StoreProductService
             ]);
         }
 
+        // Apply VAT division (divide by 1.19) to prices only when they are being changed
+        if (isset($data['price']) && $data['price'] !== null && $data['price'] !== '') {
+            // Remove any formatting from input price
+            $inputPrice = (float) str_replace([',', ' '], '', $data['price']);
+            $currentPrice = (float) $product->price;
+            
+            // Only apply division if the price is actually being changed (with precision tolerance)
+            if (abs($inputPrice - $currentPrice) > 0.01) {
+                $data['price'] = $inputPrice / 1.19;
+            } else {
+                // Keep the current price unchanged to avoid precision issues
+                unset($data['price']);
+            }
+        }
+
+        if (isset($data['sale_price']) && $data['sale_price'] !== null && $data['sale_price'] !== '') {
+            // Remove any formatting from input sale price
+            $inputSalePrice = (float) str_replace([',', ' '], '', $data['sale_price']);
+            $currentSalePrice = (float) $product->sale_price;
+            
+            // Only apply division if the sale price is actually being changed (with precision tolerance)
+            if (abs($inputSalePrice - $currentSalePrice) > 0.01) {
+                $data['sale_price'] = $inputSalePrice / 1.19;
+            } else {
+                // Keep the current sale price unchanged to avoid precision issues
+                unset($data['sale_price']);
+            }
+        }
+
         if ($sku = $request->input('sku')) {
             $product->sku = $sku;
         }
