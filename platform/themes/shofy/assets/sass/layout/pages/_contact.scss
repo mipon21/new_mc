@@ -1,0 +1,341 @@
+@use '../../utils' as *;
+
+/*----------------------------------------*/
+/*  7.10 Contact CSS
+/*----------------------------------------*/
+
+.#{$theme-prefix}-contact {
+    &-section {
+        position: relative;
+        z-index: 1;
+        
+        &-with-bg {
+            min-height: 100vh;
+            padding-top: 100px;
+            padding-bottom: 100px;
+            background-attachment: fixed;
+            
+            @media #{$lg} {
+                min-height: 80vh;
+                padding-top: 80px;
+                padding-bottom: 80px;
+                background-attachment: scroll;
+            }
+            
+            @media #{$md, $sm, $xs} {
+                min-height: 60vh;
+                padding-top: 60px;
+                padding-bottom: 60px;
+                background-attachment: scroll;
+                background-size: cover !important;
+                background-position: center center !important;
+            }
+        }
+    }
+    
+    &-bg-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        background: linear-gradient(
+            135deg, 
+            rgba(0, 0, 0, 0.7) 0%, 
+            rgba(0, 0, 0, 0.4) 50%, 
+            rgba(0, 0, 0, 0.7) 100%
+        );
+    }
+    
+    .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    &-wrapper {
+        margin-right: 0px;
+
+        @media #{$md, $sm, $xs} {
+            margin-right: 0;
+        }
+    }
+    &-inner {
+        padding: 42px 70px 49px;
+        background: var(--tp-common-white);
+        box-shadow: 0px 30px 70px rgba(1, 15, 28, 0.1);
+
+        @media #{$xs} {
+            padding: 20px 25px 49px;
+        }
+        
+        // Enhanced styling for background version
+        .#{$theme-prefix}-contact-section-with-bg & {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0px 30px 70px rgba(1, 15, 28, 0.2);
+            border-radius: 20px;
+            
+            @media #{$xs} {
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 15px;
+            }
+        }
+    }
+    
+    &-title {
+        font-size: 30px;
+        font-weight: 500;
+        margin-bottom: 35px;
+        
+        // Enhanced styling for background version
+        .#{$theme-prefix}-contact-section-with-bg & {
+            color: var(--tp-common-black);
+            text-shadow: none;
+        }
+    }
+    
+    &-input {
+        &-wrapper {
+            margin-bottom: 8px;
+        }
+        &-box {
+            position: relative;
+            &:not(:last-child) {
+                margin-bottom: 34px;
+            }
+        }
+        & input {
+            height: 56px;
+            background: #ffffff;
+            border: 1px solid #e0e2e3;
+            font-size: 14px;
+            color: var(--tp-common-black);
+            @include tp-placeholder {
+                color: #95999d;
+            }
+        }
+        & textarea {
+            height: 165px;
+            resize: none;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box;
+        }
+        &-title {
+            & label {
+                font-size: 14px;
+                color: var(--tp-common-black);
+                position: absolute;
+                top: -7px;
+                left: 20px;
+                padding: 0 5px;
+                background-color: var(--tp-common-white);
+                line-height: 1;
+            }
+        }
+        &-eye {
+            position: absolute;
+            right: 26px;
+            top: 50%;
+            @include transform(translateY(-50%));
+
+            & .open-eye {
+                display: none;
+            }
+
+            & span {
+                @extend %tp-transition;
+            }
+
+            &:hover {
+                cursor: pointer;
+
+                & span {
+                    color: var(--tp-common-black);
+                }
+            }
+        }
+    }
+    &-btn {
+        --tp-btn-color: var(--tp-common-white);
+
+        font-size: 16px;
+        color: var(--tp-btn-color);
+        background-color: var(--tp-common-black);
+        padding: 9px 30px;
+        display: inline-block;
+        @extend %tp-transition;
+
+        &:hover {
+            background-color: var(--tp-theme-primary);
+        }
+    }
+    &-info {
+        &-wrapper {
+            margin-left: 5px;
+            padding-top: 50px;
+            
+            // Enhanced styling for background version
+            .#{$theme-prefix}-contact-section-with-bg & {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 15px;
+                padding: 30px 20px;
+                margin-top: 0;
+                
+                @media #{$md, $sm, $xs} {
+                    margin-top: 30px;
+                    padding: 20px 15px;
+                }
+            }
+        }
+        &-item {
+            &:not(:last-child) {
+                margin-bottom: 38px;
+            }
+            
+            // Enhanced styling for background version
+            .#{$theme-prefix}-contact-section-with-bg & {
+                .#{$theme-prefix}-contact-info-content p {
+                    color: var(--tp-common-white);
+                    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+                    
+                    a {
+                        color: var(--tp-common-white);
+                        text-decoration: underline;
+                        
+                        &:hover {
+                            color: var(--tp-theme-primary);
+                        }
+                    }
+                }
+            }
+        }
+        &-icon {
+            @include flexbox();
+            align-items: flex-end;
+            justify-content: flex-start;
+            margin-bottom: 18px;
+            height: 62px;
+            & span {
+                font-size: 60px;
+            }
+        }
+        &-content {
+            & p {
+                &[data-info='mail'] {
+                    color: #55585b;
+                    margin-bottom: 0;
+                }
+                &[data-info='phone'] {
+                    font-weight: 500;
+                }
+                font-size: 18px;
+                line-height: 1.44;
+                color: var(--tp-common-black);
+                & a {
+                    &:hover {
+                        color: var(--tp-theme-primary);
+                    }
+                }
+            }
+        }
+    }
+    &-social {
+        &-title {
+            font-weight: 400;
+            font-size: 18px;
+            margin-bottom: 15px;
+            
+            // Enhanced styling for background version
+            .#{$theme-prefix}-contact-section-with-bg & {
+                color: var(--tp-common-white);
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            }
+        }
+        &-icon {
+            & a {
+                display: inline-block;
+                margin-inline-end: 4px;
+                width: 38px;
+                height: 38px;
+                line-height: 36px;
+                text-align: center;
+                border: 1px solid #e6e7e8;
+                background-color: var(--tp-common-white);
+                color: var(--tp-common-black);
+
+                &:hover {
+                    background-color: var(--tp-theme-primary);
+                    border-color: var(--tp-theme-primary);
+                    color: var(--tp-common-white);
+                }
+
+                &:last-child {
+                    margin-inline-end: 0;
+                }
+            }
+            
+            // Enhanced styling for background version
+            .#{$theme-prefix}-contact-section-with-bg & a {
+                background-color: rgba(255, 255, 255, 0.9);
+                border-color: rgba(255, 255, 255, 0.3);
+                backdrop-filter: blur(5px);
+                
+                &:hover {
+                    background-color: var(--tp-theme-primary);
+                    border-color: var(--tp-theme-primary);
+                    color: var(--tp-common-white);
+                }
+            }
+        }
+    }
+}
+
+/* map css start */
+
+.#{$theme-prefix}-map {
+    position: relative;
+    z-index: 0; // Ensure map doesn't overlap contact section
+    
+    &-wrapper {
+        position: relative;
+    }
+    &-hotspot {
+        position: absolute;
+        top: 50%;
+        left: 45%;
+        z-index: 1;
+        & .tp-hotspot {
+            width: 30px;
+            height: 30px;
+            background-color: #fff;
+            box-shadow: 0px 4px 10px rgba(8, 41, 72, 0.2);
+            z-index: auto;
+            & svg {
+                @include transform(translate(0px, -8px));
+            }
+
+            &::after,
+            &::before {
+                border: 1px solid rgba($color: $black, $alpha: 0.04);
+                background-color: rgba($color: $white, $alpha: 0.6);
+                backdrop-filter: blur(3px);
+            }
+            &::before {
+                display: none;
+            }
+        }
+    }
+    &-iframe {
+        width: 100%;
+
+        & iframe {
+            width: 100%;
+            height: 100%;
+        }
+    }
+}

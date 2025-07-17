@@ -1,0 +1,11 @@
+{
+    "id": "botble/announcementadmin",
+    "name": "Announcementadmin",
+    "namespace": "Botble\\Announcementadmin\\",
+    "provider": "Botble\\Announcementadmin\\Providers\\AnnouncementadminServiceProvider",
+    "author": "Tuan Nguyen",
+    "url": "",
+    "version": "1.0.0",
+    "description": "",
+    "minimum_core_version": "7.4.6"
+}

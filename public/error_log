@@ -1,0 +1,4 @@
+[18-Jun-2025 14:00:04 UTC] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /home2/mc/new.moebel-lippold.com/vendor/shippo/shippo-php/lib/Shippo/ApiResource.php on line 58
+[18-Jun-2025 14:05:09 UTC] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /home2/mc/new.moebel-lippold.com/vendor/shippo/shippo-php/lib/Shippo/ApiResource.php on line 58
+[18-Jun-2025 14:08:04 UTC] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /home2/mc/new.moebel-lippold.com/vendor/shippo/shippo-php/lib/Shippo/ApiResource.php on line 58
+[18-Jun-2025 14:19:56 UTC] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /home2/mc/new.moebel-lippold.com/vendor/shippo/shippo-php/lib/Shippo/ApiResource.php on line 58

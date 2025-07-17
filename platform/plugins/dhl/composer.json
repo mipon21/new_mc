@@ -1,0 +1,13 @@
+{
+    "name": "botble/dhl",
+    "description": "DHL plugin",
+    "type": "package",
+    "authors": [
+        {
+            "name": "Botble Technologies"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.0"
+    }
+}

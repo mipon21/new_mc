@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'name' => 'DHL',
+    'description' => 'DHL Express Shipping integration for eCommerce.',
+    'test_api_key' => 'Test API Key',
+    'production_api_key' => 'Production API Key',
+    'use_sandbox_mode' => 'Use sandbox mode',
+    'enable_log' => 'Enable debug log',
+    'cache_response' => 'Cache API response',
+    'webhooks' => 'Enable webhooks',
+    'configuration' => 'Configuration',
+    'logs' => 'Logs',
+    'get_shipping_rate' => 'Get shipping rate',
+    'get_rate' => 'Get rates',
+    'get_rate_for_this_order' => 'Get rates for this order',
+    'carrier_could_not_be_found' => 'No shipping rates found.',
+    'shipment_information' => 'Shipment Information',
+    'estimated_days' => 'Estimated delivery: :day day(s)',
+    'update_rate' => 'Update Rate',
+    'view_other_exchange_rates' => 'View :count other rates',
+    'transaction_generated' => 'Transaction generated successfully!',
+    'generate_label' => 'Generate Label',
+    'refresh_rates' => 'Refresh Rates',
+]; 

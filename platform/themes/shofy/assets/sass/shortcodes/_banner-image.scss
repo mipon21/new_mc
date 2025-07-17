@@ -1,0 +1,109 @@
+@use '../utils' as *;
+
+/*----------------------------------------*/
+/*  Banner Image Shortcode CSS
+/*----------------------------------------*/
+
+.#{$theme-prefix}-banner-image {
+    &-container {
+        margin-bottom: 30px;
+        display: block;
+        width: 100%;
+
+        @media #{$md} {
+            margin-bottom: 25px;
+        }
+
+        @media #{$sm, $xs} {
+            margin-bottom: 20px;
+        }
+    }
+
+    &-link {
+        display: block;
+        text-decoration: none;
+        transition: all 0.3s ease;
+
+        &:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+
+            @media #{$sm, $xs} {
+                transform: none;
+                opacity: 0.95;
+            }
+
+            .#{$theme-prefix}-banner-image {
+                transform: scale(1.02);
+
+                @media #{$sm, $xs} {
+                    transform: none;
+                }
+            }
+        }
+    }
+
+    &-wrapper {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        width: 100%;
+
+        @media #{$md} {
+            border-radius: 6px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        @media #{$sm, $xs} {
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        &:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+
+            @media #{$sm, $xs} {
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+            }
+        }
+    }
+
+    &.img-fluid {
+        transition: all 0.3s ease;
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+}
+
+// Alignment utilities for banner images
+.tp-banner-align {
+    &-left {
+        text-align: left;
+
+        .#{$theme-prefix}-banner-image-container {
+            margin-left: 0;
+            margin-right: auto;
+        }
+    }
+
+    &-center {
+        text-align: center;
+
+        .#{$theme-prefix}-banner-image-container {
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    &-right {
+        text-align: right;
+
+        .#{$theme-prefix}-banner-image-container {
+            margin-left: auto;
+            margin-right: 0;
+        }
+    }
+}
