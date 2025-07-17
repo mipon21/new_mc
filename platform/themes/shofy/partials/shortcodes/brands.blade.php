@@ -1,23 +1,40 @@
 @if($brands)
-    <div class="brands-section style-{{ $style }}">
+    <section class="brands-section style-{{ $style ?? 'style-1' }} pt-50 pb-50">
         <div class="container">
-            @if($title || $subtitle)
-                <div class="section-title mb-5">
-                    @if($subtitle)
-                        <span class="subtitle">{{ $subtitle }}</span>
-                    @endif
-                    @if($title)
-                        <h2 class="title">{{ $title }}</h2>
+            <div class="row align-items-center mb-40">
+                <div class="col-xl-4 col-md-6">
+                    @php
+                        $shortcode = (object) [
+                            'title' => $title ?? '',
+                            'subtitle' => $subtitle ?? '',
+                        ];
+                    @endphp
+                    {!! Theme::partial('section-title', compact('shortcode')) !!}
+                </div>
+                <div class="col-xl-8 col-md-6">
+                    @if(isset($buttonLabel) && $buttonLabel && isset($buttonUrl) && $buttonUrl)
+                        <div class="tp-blog-more-wrapper d-flex justify-content-md-end">
+                            <div class="tp-blog-more text-md-end">
+                                <a href="{{ $buttonUrl }}" class="tp-btn tp-btn-2 tp-btn-blue">
+                                    {{ $buttonLabel }}
+                                    <svg width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M16 6.99976L1 6.99976" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M9.9502 0.975414L16.0002 6.99941L9.9502 13.0244" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </a>
+                                <span class="tp-blog-more-border"></span>
+                            </div>
+                        </div>
                     @endif
                 </div>
-            @endif
+            </div>
             <div class="brands-wrapper">
                 <div class="brands-scroll">
                     <div class="brands-track">
                         @foreach($brands as $brand)
                             <div class="brand-item">
                                 @if(!empty($brand['url']))
-                                    <a href="{{ $brand['url'] }}" target="_blank" rel="noopener noreferrer">
+                                    <a href="{{ $brand['url'] }}">
                                         <img src="{{ RvMedia::getImageUrl($brand['image']) }}" alt="{{ $brand['name'] }}" class="img-fluid">
                                     </a>
                                 @else
@@ -28,7 +45,7 @@
                         @foreach($brands as $brand)
                             <div class="brand-item">
                                 @if(!empty($brand['url']))
-                                    <a href="{{ $brand['url'] }}" target="_blank" rel="noopener noreferrer">
+                                    <a href="{{ $brand['url'] }}">
                                         <img src="{{ RvMedia::getImageUrl($brand['image']) }}" alt="{{ $brand['name'] }}" class="img-fluid">
                                     </a>
                                 @else
@@ -40,29 +57,11 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <style>
         .brands-section {
-            padding: 40px 0;
             overflow: hidden;
-        }
-        .section-title {
-            margin-bottom: 40px;
-            text-align: left;
-        }
-        .section-title .subtitle {
-            color: var(--primary-color);
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 10px;
-            display: block;
-        }
-        .section-title .title {
-            font-size: 32px;
-            font-weight: 600;
-            margin-bottom: 0;
-            color: var(--heading-color);
         }
         .brands-wrapper {
             position: relative;

@@ -460,6 +460,11 @@ class Product extends BaseModel
         if (! $this->with_storehouse_management) {
             return true;
         }
+        
+        // Allow any quantity when stock is <= 0
+        if ($this->quantity <= 0) {
+            return true;
+        }
 
         return ($this->quantity - $quantity) >= 0;
     }
@@ -842,7 +847,16 @@ class Product extends BaseModel
                 return $this->maximum_order_quantity;
             }
 
-            return $this->with_storehouse_management ? $this->quantity : 1000;
+            if ($this->with_storehouse_management) {
+                // Allow unlimited quantity selection if stock is <= 0
+                if ($this->quantity <= 0) {
+                    return 1000;
+                }
+                
+                return $this->quantity;
+            }
+            
+            return 1000;
         });
     }
 }

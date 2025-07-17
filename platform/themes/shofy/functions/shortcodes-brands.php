@@ -13,29 +13,31 @@ use Botble\Theme\Facades\Theme;
 
 app()->booted(function (): void {
     Shortcode::register('brands', __('Brands'), __('Add brands section'), function ($shortcode) {
-        $style = $shortcode->style;
-        $quantity = (int) $shortcode->quantity ?: 6;
-        $title = $shortcode->title;
-        $subtitle = $shortcode->subtitle;
+        $style = $shortcode->style ?? 'style-1';
+        $quantity = (int) ($shortcode->quantity ?: 6);
+        $title = $shortcode->title ?? '';
+        $subtitle = $shortcode->subtitle ?? '';
+        $buttonLabel = $shortcode->button_label ?? '';
+        $buttonUrl = $shortcode->button_url ?? '';
         
         $brands = [];
         for ($i = 1; $i <= $quantity; $i++) {
-            if ($shortcode->{'name_' . $i} && $shortcode->{'image_' . $i}) {
-                $url = $shortcode->{'url_' . $i};
+            if (($shortcode->{'name_' . $i} ?? '') && ($shortcode->{'image_' . $i} ?? '')) {
+                $url = $shortcode->{'url_' . $i} ?? '';
                 // Format URL if it doesn't start with http:// or https://
                 if (!empty($url) && !preg_match('~^(?:f|ht)tps?://~i', $url)) {
                     $url = 'https://' . $url;
                 }
                 
                 $brands[] = [
-                    'name' => $shortcode->{'name_' . $i},
-                    'image' => $shortcode->{'image_' . $i},
+                    'name' => $shortcode->{'name_' . $i} ?? '',
+                    'image' => $shortcode->{'image_' . $i} ?? '',
                     'url' => $url,
                 ];
             }
         }
 
-        return view(Theme::getThemeNamespace() . '::partials.shortcodes.brands', compact('style', 'brands', 'title', 'subtitle'))->render();
+        return view(Theme::getThemeNamespace() . '::partials.shortcodes.brands', compact('style', 'brands', 'title', 'subtitle', 'buttonLabel', 'buttonUrl'))->render();
     });
 
     Shortcode::setPreviewImage('brands', Theme::asset()->url('images/shortcodes/brands/style-1.png'));
@@ -55,6 +57,20 @@ app()->booted(function (): void {
                 TextFieldOption::make()
                     ->label(__('Subtitle'))
                     ->placeholder(__('Enter subtitle'))
+            )
+            ->add(
+                'button_label',
+                TextField::class,
+                TextFieldOption::make()
+                    ->label(__('Button Label'))
+                    ->placeholder(__('Enter button label'))
+            )
+            ->add(
+                'button_url',
+                TextField::class,
+                TextFieldOption::make()
+                    ->label(__('Button URL'))
+                    ->placeholder(__('Enter button URL'))
             )
             ->add(
                 'style',

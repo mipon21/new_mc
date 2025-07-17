@@ -405,6 +405,11 @@ class CartController extends BaseController
         if ($quantity === null) {
             return ! $product->isOutOfStock();
         }
+        
+        // Allow any quantity when stock is <= 0
+        if ($product->with_storehouse_management && $product->quantity <= 0) {
+            return true;
+        }
 
         if ($product->isOutOfStock() || $product->quantity < $quantity) {
             return false;
