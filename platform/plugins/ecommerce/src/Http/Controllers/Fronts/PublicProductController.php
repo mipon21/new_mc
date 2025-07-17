@@ -184,17 +184,14 @@ class PublicProductController extends BaseController
                 $product->warningMessage = __('Warning: This product is on backorder and may take longer to ship.');
             } elseif ($product->isOutOfStock()) {
                 $product->errorMessage = __('Out of stock');
-            } elseif (! $product->with_storehouse_management || $product->quantity < 1) {
+            } elseif (! $product->with_storehouse_management) {
                 $product->successMessage = __('In stock');
-            } elseif ($product->quantity) {
-                if (EcommerceHelper::showNumberOfProductsInProductSingle()) {
-                    if ($product->quantity != 1) {
-                        $product->successMessage = __(':number products available', ['number' => $product->quantity]);
-                    } else {
-                        $product->successMessage = __(':number product available', ['number' => $product->quantity]);
-                    }
+            } elseif ($product->with_storehouse_management) {
+                // Custom logic for warehouse management
+                if ($product->quantity > 0) {
+                    $product->successMessage = trans('plugins/ecommerce::products.availability.in_stock_shipping');
                 } else {
-                    $product->successMessage = __('In stock');
+                    $product->warningMessage = trans('plugins/ecommerce::products.availability.build_for_you');
                 }
             }
 

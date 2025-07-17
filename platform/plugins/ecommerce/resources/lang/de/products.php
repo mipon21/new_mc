@@ -171,6 +171,10 @@ return [
         'on_backorder' => 'Wir bauen für Sie, 8-12 Wochen',
         'in_stock_with_shipping' => 'Auf Lager, Versand in :weeks Wochen',
     ],
+    'availability' => [
+        'in_stock_shipping' => 'Verfügbarkeit: auf Lager, Lieferzeit bis zu 10 Werktagen',
+        'build_for_you' => 'Verfügbarkeit: Wir bauen für Sie, 8-12 Wochen',
+    ],
     'stock_status' => 'Lagerstatus',
     'processing' => 'Verarbeitung...',
     'delete_selected_variations' => 'Ausgewählte Variationen löschen',

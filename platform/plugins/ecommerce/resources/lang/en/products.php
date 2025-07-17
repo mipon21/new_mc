@@ -170,6 +170,10 @@ return [
         'on_backorder' => 'We build for you, 8-12 weeks',
         'in_stock_with_shipping' => 'In stock, shipping in :weeks weeks',
     ],
+    'availability' => [
+        'in_stock_shipping' => 'Availability: In stock, shipping in 2 weeks',
+        'build_for_you' => 'Availability: We build for you, 8-12 weeks',
+    ],
     'stock_status' => 'Stock status',
     'processing' => 'Processing...',
     'delete_selected_variations' => 'Delete selected variations',

@@ -5,6 +5,13 @@
         <p class="text-warning fw-medium fs-6">{{ trans('plugins/ecommerce::products.stock_statuses.in_stock_with_shipping', ['weeks' => $product->shipping_weeks]) }}</p>
     @elseif ($product->isOutOfStock())
         <span class="text-warning fw-medium fs-6">{{ trans('plugins/ecommerce::products.stock_statuses.out_of_stock') }}</span>
+    @elseif ($product->with_storehouse_management)
+        {{-- Custom logic for warehouse management --}}
+        @if ($product->quantity > 0)
+            <span class="text-success fw-medium fs-6">{{ trans('plugins/ecommerce::products.availability.in_stock_shipping') }}</span>
+        @else
+            <span class="text-warning fw-medium fs-6">{{ trans('plugins/ecommerce::products.availability.build_for_you') }}</span>
+        @endif
     @else
         @if (! $productVariation)
             <span class="text-danger">{{ __('Not available') }}
@@ -15,20 +22,15 @@
                 <p class="text-warning fw-medium fs-6">{{ trans('plugins/ecommerce::products.stock_statuses.in_stock_with_shipping', ['weeks' => $productVariation->shipping_weeks]) }}</p>
             @elseif ($productVariation->isOutOfStock())
                 <span class="text-warning fw-medium fs-6">{{ trans('plugins/ecommerce::products.stock_statuses.out_of_stock') }}</span>
-            @elseif (! $productVariation->with_storehouse_management || $productVariation->quantity < 1)
+            @elseif (! $productVariation->with_storehouse_management)
                 <span class="text-success">{{ __('Available') }}</span>
-            @elseif ($productVariation->quantity)
-                <span class="text-success">
-                    @if (EcommerceHelper::showNumberOfProductsInProductSingle())
-                        @if ($productVariation->quantity !== 1)
-                            {{ __(':number products available', ['number' => $productVariation->quantity]) }}
-                        @else
-                            {{ __(':number product available', ['number' => $productVariation->quantity]) }}
-                        @endif
-                    @else
-                        {{ __('In stock') }}
-                    @endif
-                </span>
+            @elseif ($productVariation->with_storehouse_management)
+                {{-- Custom logic for warehouse management --}}
+                @if ($productVariation->quantity > 0)
+                    <span class="text-success fw-medium fs-6">{{ trans('plugins/ecommerce::products.availability.in_stock_shipping') }}</span>
+                @else
+                    <span class="text-warning fw-medium fs-6">{{ trans('plugins/ecommerce::products.availability.build_for_you') }}</span>
+                @endif
            @endif
        @endif
     @endif
