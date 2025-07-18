@@ -363,11 +363,15 @@ class ProductRepository extends RepositoriesAbstract implements ProductInterface
             }
         }
 
+        // Store random_sort flag for later use
+        $randomSort = isset($params['random_sort']) && $params['random_sort'];
+
         $params = array_merge([
             'condition' => [
                 'ec_products.is_variation' => 0,
             ],
-            'order_by' => Arr::get($filters, 'order_by'),
+            'order_by' => $randomSort ? [] : Arr::get($filters, 'order_by'), // Remove order_by if random sort
+            'random_sort' => false,
             'take' => null,
             'paginate' => [
                 'per_page' => null,
@@ -449,15 +453,17 @@ class ProductRepository extends RepositoriesAbstract implements ProductInterface
                 return $join->on('products_with_final_price.id', '=', 'ec_products.id');
             });
 
-        // Add custom order for out-of-stock products
-        $this->model = $this->model->orderByRaw('
-                CASE
-                    WHEN ec_products.with_storehouse_management = 0 THEN
-                        CASE WHEN ec_products.stock_status = ? THEN 1 ELSE 0 END
-                    ELSE
-                        CASE WHEN ec_products.quantity <= 0 AND ec_products.allow_checkout_when_out_of_stock = 0 THEN 1 ELSE 0 END
-                END ASC
-            ', [StockStatusEnum::OUT_OF_STOCK]);
+        // Add custom order for out-of-stock products only if not random sorting
+        if (!$randomSort) {
+            $this->model = $this->model->orderByRaw('
+                    CASE
+                        WHEN ec_products.with_storehouse_management = 0 THEN
+                            CASE WHEN ec_products.stock_status = ? THEN 1 ELSE 0 END
+                        ELSE
+                            CASE WHEN ec_products.quantity <= 0 AND ec_products.allow_checkout_when_out_of_stock = 0 THEN 1 ELSE 0 END
+                    END ASC
+                ', [StockStatusEnum::OUT_OF_STOCK]);
+        }
 
         if ($keyword = $filters['keyword']) {
             $searchProductsBy = EcommerceHelper::getProductsSearchBy();
@@ -585,19 +591,22 @@ class ProductRepository extends RepositoriesAbstract implements ProductInterface
                     });
             }
 
-            $this->model = $this->model
-                ->orderByRaw('
-                            (CASE
-                                WHEN name LIKE ? THEN 4
-                                WHEN name LIKE ? THEN 3
-                                WHEN name LIKE ? THEN 2
-                                ELSE 1
-                            END) DESC
-                        ', [
-                    "{$keyword}",
-                    "%{$keyword}%",
-                    "%{$keyword}%",
-                ]);
+            // Skip keyword-based ordering if using random sort
+            if (!$randomSort) {
+                $this->model = $this->model
+                    ->orderByRaw('
+                                (CASE
+                                    WHEN name LIKE ? THEN 4
+                                    WHEN name LIKE ? THEN 3
+                                    WHEN name LIKE ? THEN 2
+                                    ELSE 1
+                                END) DESC
+                            ', [
+                        "{$keyword}",
+                        "%{$keyword}%",
+                        "%{$keyword}%",
+                    ]);
+            }
         }
 
         // Filter product by min price and max price
@@ -736,6 +745,11 @@ class ProductRepository extends RepositoriesAbstract implements ProductInterface
         }
 
         $this->model = apply_filters('ecommerce_products_filter', $this->model, $filters, $params);
+
+        // Apply random ordering at the very end
+        if ($randomSort) {
+            $this->model = $this->model->inRandomOrder();
+        }
 
         return $this->advancedGet($params);
     }

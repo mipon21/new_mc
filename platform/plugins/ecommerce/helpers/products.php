@@ -27,13 +27,11 @@ if (! function_exists('get_product_by_id')) {
 if (! function_exists('get_products')) {
     function get_products(array $params = [], array $filters = []): Collection|LengthAwarePaginator|Product|null
     {
-        $params = [
+        $isRandomSort = isset($params['random_sort']) && $params['random_sort'];
+        
+        $defaultParams = [
             'condition' => [
                 'ec_products.is_variation' => 0,
-            ],
-            'order_by' => [
-                'ec_products.order' => 'ASC',
-                'ec_products.created_at' => 'DESC',
             ],
             'take' => null,
             'paginate' => [
@@ -46,8 +44,17 @@ if (! function_exists('get_products')) {
             'with' => ['slugable'],
             'withCount' => [],
             'withAvg' => [],
-            ...$params,
         ];
+
+        // Only add default ordering if not using random sort
+        if (!$isRandomSort) {
+            $defaultParams['order_by'] = [
+                'ec_products.order' => 'ASC',
+                'ec_products.created_at' => 'DESC',
+            ];
+        }
+
+        $params = array_merge($defaultParams, $params);
 
         return app(ProductInterface::class)->getProducts($params, $filters);
     }
@@ -56,13 +63,11 @@ if (! function_exists('get_products')) {
 if (! function_exists('get_products_on_sale')) {
     function get_products_on_sale(array $params = []): Collection|LengthAwarePaginator|Product|null
     {
-        $params = array_merge([
+        $isRandomSort = isset($params['random_sort']) && $params['random_sort'];
+        
+        $defaultParams = [
             'condition' => [
                 'ec_products.is_variation' => 0,
-            ],
-            'order_by' => [
-                'ec_products.order' => 'ASC',
-                'ec_products.created_at' => 'DESC',
             ],
             'take' => null,
             'paginate' => [
@@ -74,7 +79,17 @@ if (! function_exists('get_products_on_sale')) {
             ],
             'with' => [],
             'withCount' => [],
-        ], $params + EcommerceHelper::withReviewsParams());
+        ];
+
+        // Only add default ordering if not using random sort
+        if (!$isRandomSort) {
+            $defaultParams['order_by'] = [
+                'ec_products.order' => 'ASC',
+                'ec_products.created_at' => 'DESC',
+            ];
+        }
+
+        $params = array_merge($defaultParams, $params, EcommerceHelper::withReviewsParams());
 
         return app(ProductInterface::class)->getOnSaleProducts($params);
     }
@@ -83,19 +98,27 @@ if (! function_exists('get_products_on_sale')) {
 if (! function_exists('get_featured_products')) {
     function get_featured_products(array $params = []): Collection|LengthAwarePaginator|Product|null
     {
-        $params = array_merge([
+        $isRandomSort = isset($params['random_sort']) && $params['random_sort'];
+        
+        $defaultParams = [
             'condition' => [
                 'ec_products.is_featured' => 1,
                 'ec_products.is_variation' => 0,
             ],
             'take' => null,
-            'order_by' => [
-                'ec_products.order' => 'ASC',
-                'ec_products.created_at' => 'DESC',
-            ],
             'select' => ['ec_products.*'],
             'with' => [],
-        ], $params + EcommerceHelper::withReviewsParams());
+        ];
+
+        // Only add default ordering if not using random sort
+        if (!$isRandomSort) {
+            $defaultParams['order_by'] = [
+                'ec_products.order' => 'ASC',
+                'ec_products.created_at' => 'DESC',
+            ];
+        }
+
+        $params = array_merge($defaultParams, $params, EcommerceHelper::withReviewsParams());
 
         return app(ProductInterface::class)->getProducts($params);
     }
@@ -151,17 +174,25 @@ if (! function_exists('get_top_rated_product_ids')) {
 if (! function_exists('get_trending_products')) {
     function get_trending_products(array $params = []): Collection|LengthAwarePaginator|Product|null
     {
-        $params = array_merge([
+        $isRandomSort = isset($params['random_sort']) && $params['random_sort'];
+        
+        $defaultParams = [
             'condition' => [
                 'ec_products.is_variation' => 0,
             ],
             'take' => 10,
-            'order_by' => [
-                'ec_products.views' => 'DESC',
-            ],
             'select' => ['ec_products.*'],
             'with' => [],
-        ], $params + EcommerceHelper::withReviewsParams());
+        ];
+
+        // Only add default ordering if not using random sort (trending usually orders by views)
+        if (!$isRandomSort) {
+            $defaultParams['order_by'] = [
+                'ec_products.views' => 'DESC',
+            ];
+        }
+
+        $params = array_merge($defaultParams, $params, EcommerceHelper::withReviewsParams());
 
         return app(ProductInterface::class)->getProducts($params);
     }

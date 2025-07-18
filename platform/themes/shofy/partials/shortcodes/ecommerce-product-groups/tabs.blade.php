@@ -10,7 +10,7 @@
                         class="nav nav-tabs justify-content-sm-end"
                         id="productTab"
                         role="tablist"
-                        data-ajax-url="{{ route('public.ajax.products', ['limit' => $shortcode->limit ?: 8]) }}"
+                        data-ajax-url="{{ route('public.ajax.products', ['limit' => $shortcode->limit ?: 8, '_' => time()]) }}"
                     >
                         @foreach($productTabs as $key => $tab)
                             @continue(! in_array($key, $selectedTabs) || (! EcommerceHelper::isReviewEnabled() && $key === 'top-rated'))
@@ -44,14 +44,24 @@
                 <div class="tp-product-tab-content">
                     <div class="tab-content" id="productTabContent">
                         <div class="tab-pane fade show active" id="tab-pane" role="tabpanel" aria-labelledby="tab" tabindex="0">
-                            @foreach($groups as $key => $tab)
-                                @continue(! isset($tab['products']))
-
-                                @include(
-                                    Theme::getThemeNamespace('views.ecommerce.includes.product-items'),
-                                    ['products' => $tab['products'], 'itemsPerRow' => get_products_per_row(), 'layout' => 'grid']
-                                )
-                            @endforeach
+                            @if(count($groups) > 0)
+                                @foreach($groups as $key => $tab)
+                                    @continue(! isset($tab['products']))
+                                    @if($tab['products']->count() > 0)
+                                        @include(
+                                            Theme::getThemeNamespace('views.ecommerce.includes.product-items'),
+                                            ['products' => $tab['products'], 'itemsPerRow' => get_products_per_row(), 'layout' => 'grid']
+                                        )
+                                    @else
+                                        <div class="alert alert-info">No products found in {{ $tab['title'] }} category.</div>
+                                    @endif
+                                @endforeach
+                            @else
+                                <div class="alert alert-warning">No product groups configured.</div>
+                            @endif
+                            <div id="ajax-loading-error" class="alert alert-danger mt-3 d-none">
+                                There was an error loading products. Please try refreshing the page.
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -59,3 +69,13 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add error handling for AJAX requests
+        $(document).ajaxError(function(event, jqxhr, settings, error) {
+            console.error("AJAX Error:", error, jqxhr.responseText);
+            $('#ajax-loading-error').removeClass('d-none');
+        });
+    });
+</script>

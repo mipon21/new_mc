@@ -280,6 +280,7 @@ $(() => {
     windowOn.on('scroll', function () {
         canStickyHeader('#header-sticky')
         canStickyHeader('#header-sticky-2')
+        canStickyHeaderTop('#header-top-sticky')
     })
 
     const canStickyHeader = (element) => {
@@ -297,6 +298,32 @@ $(() => {
                 header.removeClass(header.prop('id'))
             } else {
                 header.addClass(header.prop('id'))
+            }
+        }
+    }
+
+    const canStickyHeaderTop = (element) => {
+        const width = window.innerWidth
+        const scroll = $(window).scrollTop()
+        const header = $(element)
+
+        if (
+            !!(
+                (width > 991 && header.data('sticky') !== undefined) ||
+                (width < 992 && header.data('mobile-sticky') !== undefined)
+            )
+        ) {
+            if (scroll < 100) {
+                header.removeClass('header-sticky')
+                $('body').removeClass('header-top-sticky-active')
+                // Remove CSS variable
+                document.documentElement.style.removeProperty('--header-top-height')
+            } else {
+                header.addClass('header-sticky')
+                $('body').addClass('header-top-sticky-active')
+                // Set the actual height as CSS variable for use in styles
+                const headerHeight = header.outerHeight()
+                document.documentElement.style.setProperty('--header-top-height', headerHeight + 'px')
             }
         }
     }

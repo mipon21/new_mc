@@ -11,8 +11,10 @@
 @endphp
 
 <div
-    @class(['p-relative z-index-11', 'tp-header-top-border' => $hasCurrencies || $announcements, 'tp-header-top-2' => $colorMode === 'light', 'tp-header-top black-bg' => $colorMode !== 'light'])
+    id="header-top-sticky"
+    @class(['p-relative z-index-11 tp-header-top-sticky', 'tp-header-top-border' => $hasCurrencies || $announcements, 'tp-header-top-2' => $colorMode === 'light', 'tp-header-top black-bg' => $colorMode !== 'light'])
     style="background-color: {{ theme_option('header_top_background_color', $headerTopBackgroundColor) }}; color: {{ $headerTopTextColor }}"
+    {!! Theme::partial('header.sticky-data-top') !!}
 >
     <div @class([$headerTopClass ?? null])>
         <div class="d-flex flex-wrap align-items-center justify-content-between">

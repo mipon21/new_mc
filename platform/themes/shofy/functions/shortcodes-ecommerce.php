@@ -580,83 +580,105 @@ app()->booted(function (): void {
         __('Ecommerce Product Groups'),
         __('Ecommerce Product Groups'),
         function (ShortcodeCompiler $shortcode) {
-            $productTabs = [
-                'all' => __('All'),
-                'featured' => __('Featured'),
-                'on-sale' => __('On sale'),
-                'trending' => __('Trending'),
-                'top-rated' => __('Top rated'),
-            ];
+            try {
+                $productTabs = [
+                    'all' => __('All'),
+                    'featured' => __('Featured'),
+                    'on-sale' => __('On sale'),
+                    'trending' => __('Trending'),
+                    'top-rated' => __('Top rated'),
+                ];
 
-            $selectedTabs = Shortcode::fields()->parseIds($shortcode->tabs);
+                $selectedTabs = Shortcode::fields()->parseIds($shortcode->tabs);
 
-            if (empty($selectedTabs)) {
-                $selectedTabs = array_keys($productTabs);
-            }
+                if (empty($selectedTabs)) {
+                    $selectedTabs = array_keys($productTabs);
+                }
 
-            $style = in_array($shortcode->style, ['tabs', 'columns']) ? $shortcode->style : 'tabs';
+                $style = in_array($shortcode->style, ['tabs', 'columns']) ? $shortcode->style : 'tabs';
 
-            $groups = [];
+                $groups = [];
 
-            $limit = (int) $shortcode->limit ?: 15;
+                $limit = (int) $shortcode->limit ?: 15;
 
-            $params = ['take' => $limit];
+                $params = [
+                    'take' => $limit,
+                    // Force random sorting with timestamp to ensure fresh results
+                    'random_sort' => true,
+                    'force_fresh' => true,
+                    // Add a unique identifier to force fresh query
+                    'query_id' => uniqid('random_', true),
+                ];
 
-            if ($style === 'columns') {
-                foreach ($selectedTabs as $tab) {
-                    $groups[$tab] = match ($tab) {
-                        'featured' => [
-                            'title' => __('Featured'),
-                            'products' => get_featured_products($params),
-                        ],
-                        'on-sale' => [
-                            'title' => __('On Sale'),
-                            'products' => get_products_on_sale($params),
-                        ],
-                        'trending' => [
-                            'title' => __('Trending Products'),
-                            'products' => get_trending_products($params),
-                        ],
+                if ($style === 'columns') {
+                    foreach ($selectedTabs as $tab) {
+                        $products = match ($tab) {
+                            'featured' => get_featured_products($params),
+                            'on-sale' => get_products_on_sale($params),
+                            'trending' => get_trending_products($params),
+                            'top-rated' => get_top_rated_products($limit),
+                            default => get_products($params + EcommerceHelper::withReviewsParams()),
+                        };
 
-                        'top-rated' => [
-                            'title' => __('Top Rated'),
-                            'products' => get_top_rated_products($limit),
-                        ],
-                        default => [
-                            'title' => __('All Products'),
-                            'products' => get_products($params + EcommerceHelper::withReviewsParams()),
-                        ],
+                        // Convert to collection if needed and shuffle again for extra randomness
+                        if (! $products instanceof Collection) {
+                            $products = collect($products instanceof Product ? [$products] : $products);
+                        }
+                        
+                        // Shuffle the collection for additional randomness
+                        if ($products->count() > 1) {
+                            $products = $products->shuffle();
+                        }
+
+                        $groups[$tab] = [
+                            'title' => match ($tab) {
+                                'featured' => __('Featured'),
+                                'on-sale' => __('On Sale'),
+                                'trending' => __('Trending Products'),
+                                'top-rated' => __('Top Rated'),
+                                default => __('All Products'),
+                            },
+                            'products' => $products,
+                        ];
+
+                        if ($groups[$tab]['products']->isEmpty()) {
+                            unset($groups[$tab]);
+                        }
+                    }
+                } elseif ($style === 'tabs') {
+                    $firstTab = $selectedTabs[0] ?? 'all';
+
+                    $products = match ($firstTab) {
+                        'featured' => get_featured_products($params),
+                        'on-sale' => get_products_on_sale($params),
+                        'trending' => get_trending_products($params),
+                        'top-rated' => get_top_rated_products($limit),
+                        default => get_products($params + EcommerceHelper::withReviewsParams()),
                     };
 
-                    if (! $groups[$tab]['products'] instanceof Collection) {
-                        $groups[$tab]['products'] = collect($groups[$tab]['products'] instanceof Product ? [$groups[$tab]['products']] : $groups[$tab]['products']);
+                    // Convert to collection if needed and shuffle again for extra randomness
+                    if (! $products instanceof Collection) {
+                        $products = collect($products instanceof Product ? [$products] : $products);
+                    }
+                    
+                    // Shuffle the collection for additional randomness
+                    if ($products->count() > 1) {
+                        $products = $products->shuffle();
                     }
 
-                    if ($groups[$tab]['products']->isEmpty()) {
-                        unset($groups[$tab]);
-                    }
+                    $groups[$firstTab] = [
+                        'title' => $productTabs[$firstTab],
+                        'products' => $products,
+                    ];
                 }
-            } elseif ($style === 'tabs') {
-                $firstTab = $selectedTabs[0] ?? 'all';
 
-                $products = match ($firstTab) {
-                    'featured' => get_featured_products($params),
-                    'on-sale' => get_products_on_sale($params),
-                    'trending' => get_trending_products($params),
-                    'top-rated' => get_top_rated_products($limit),
-                    default => get_products($params + EcommerceHelper::withReviewsParams()),
-                };
-
-                $groups[$firstTab] = [
-                    'title' => $productTabs[$firstTab],
-                    'products' => $products,
-                ];
+                return Theme::partial(
+                    'shortcodes.ecommerce-product-groups.index',
+                    compact('shortcode', 'productTabs', 'selectedTabs', 'groups', 'style')
+                );
+            } catch (\Exception $e) {
+                return "<div class='alert alert-danger'>Error loading products: {$e->getMessage()}</div>";
             }
-
-            return Theme::partial(
-                'shortcodes.ecommerce-product-groups.index',
-                compact('shortcode', 'productTabs', 'selectedTabs', 'groups', 'style')
-            );
         }
     );
 

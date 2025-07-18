@@ -60,6 +60,20 @@ app('events')->listen(RenderingThemeOptionSettings::class, function (): void {
         ->setField(
             ToggleField::make()
                 ->sectionId('opt-text-subsection-styles')
+                ->name('sticky_header_top_enabled')
+                ->label(__('Enable sticky header top'))
+                ->defaultValue(false)
+        )
+        ->setField(
+            ToggleField::make()
+                ->sectionId('opt-text-subsection-styles')
+                ->name('sticky_header_top_mobile_enabled')
+                ->label(__('Enable sticky header top on mobile'))
+                ->defaultValue(false)
+        )
+        ->setField(
+            ToggleField::make()
+                ->sectionId('opt-text-subsection-styles')
                 ->name('enabled_bottom_menu_bar_on_mobile')
                 ->label(__('Enable bottom menu bar on mobile'))
                 ->defaultValue(true)

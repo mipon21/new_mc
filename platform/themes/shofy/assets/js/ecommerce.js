@@ -570,3 +570,56 @@ $(() => {
         $countDown.countdown()
     })
 })
+
+(function ($) {
+    'use strict';
+
+    // Add cache-busting to product tab AJAX requests
+    $(document).ready(function() {
+        // For product tabs with AJAX loading
+        $(document).on('click', '[data-bb-toggle="product-tab"]', function(e) {
+            const type = $(this).data('bb-value');
+            const $tabList = $(this).closest('[data-ajax-url]');
+            const url = $tabList.data('ajax-url');
+            
+            // Add timestamp to prevent browser caching
+            const timestamp = new Date().getTime();
+            const separator = url.indexOf('?') !== -1 ? '&' : '?';
+            const ajaxUrl = url + separator + 'type=' + type + '&_=' + timestamp;
+            
+            // Add loading indicator
+            const $tabPane = $tabList.closest('.tp-product-area').find('.tab-pane');
+            $tabPane.html('<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">Loading products...</p></div>');
+            
+            // Hide any previous errors
+            $('#ajax-loading-error').addClass('d-none');
+            
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: 'json',
+                cache: false,
+                timeout: 30000, // 30 second timeout
+                success: function(res) {
+                    if (res.error) {
+                        console.error("Error from server:", res.message);
+                        $tabPane.html('<div class="alert alert-danger">Error: ' + res.message + '</div>');
+                        return;
+                    }
+                    
+                    if (!res.data || !res.data.html) {
+                        $tabPane.html('<div class="alert alert-warning">No products found.</div>');
+                        return;
+                    }
+                    
+                    $tabPane.html(res.data.html);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.error('Error loading products: ', textStatus, errorThrown);
+                    $tabPane.html('<div class="alert alert-danger">Error loading products. Please try again. Error details: ' + textStatus + '</div>');
+                }
+            });
+        });
+    });
+
+})(jQuery);
