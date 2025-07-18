@@ -34,7 +34,7 @@
                         @foreach($brands as $brand)
                             <div class="brand-item">
                                 @if(!empty($brand['url']))
-                                    <a href="{{ $brand['url'] }}">
+                                    <a href="{{ $brand['url'] }}" target="_blank" rel="noopener noreferrer">
                                         <img src="{{ RvMedia::getImageUrl($brand['image']) }}" alt="{{ $brand['name'] }}" class="img-fluid">
                                     </a>
                                 @else
@@ -45,7 +45,7 @@
                         @foreach($brands as $brand)
                             <div class="brand-item">
                                 @if(!empty($brand['url']))
-                                    <a href="{{ $brand['url'] }}">
+                                    <a href="{{ $brand['url'] }}" target="_blank" rel="noopener noreferrer">
                                         <img src="{{ RvMedia::getImageUrl($brand['image']) }}" alt="{{ $brand['name'] }}" class="img-fluid">
                                     </a>
                                 @else

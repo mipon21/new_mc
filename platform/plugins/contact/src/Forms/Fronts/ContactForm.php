@@ -283,7 +283,7 @@ class ContactForm extends FormFront
                             TextareaFieldOption::make()
                                 ->required()
                                 ->label(__('Message'))
-                                ->placeholder(__('Your Message'))
+                                ->placeholder(__('Type your message...'))
                                 ->wrapperAttributes(['class' => $this->formInputWrapperClass])
                                 ->cssClass($this->formInputClass)
                                 ->maxLength(-1)
